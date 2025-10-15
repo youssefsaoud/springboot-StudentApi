@@ -3,10 +3,15 @@ package com.youssef.springboot_learning.service;
 import com.youssef.springboot_learning.dto.StudentDTO;
 import com.youssef.springboot_learning.exception.StudentNotFoundException;
 import com.youssef.springboot_learning.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import com.youssef.springboot_learning.model.Course;
 import com.youssef.springboot_learning.dto.StudentDTO;
 
 import com.youssef.springboot_learning.repository.StudentRepository;
+import com.youssef.springboot_learning.repository.CourseRepository;
 
 import java.util.List;
 
@@ -14,13 +19,18 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository,
+                          CourseRepository courseRepository) {
         this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
     }
 
-    public List<Student> getStudents() {
-        return studentRepository.findAll();
+    public Page<Student> getStudents(int page, int size, String sortBy) {
+        return studentRepository.findAll(
+                PageRequest.of(page, size, Sort.by(sortBy))
+        );
     }
 
     public Student getStudent(Long id) {
@@ -60,6 +70,22 @@ public class StudentService {
     public Student getStudentByEmail(String email) {
         return studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+    }
+
+    public Student addCourseToStudent(Long studentId, Long courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("student not found with id: " + studentId));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        student.getCourses().add(course);
+
+        return studentRepository.save(student);
+    }
+
+    public List<Student> getStudentsOlderThan(int age) {
+        return studentRepository.findStudentsOlderThan(age);
     }
 
 

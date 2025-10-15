@@ -3,6 +3,7 @@ package com.youssef.springboot_learning.controller;
 import com.youssef.springboot_learning.model.Student;
 import com.youssef.springboot_learning.service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.youssef.springboot_learning.dto.StudentDTO;
@@ -23,9 +24,13 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public List<Student> getStudents() {
-        return studentService.getStudents();
+    public Page<Student> getStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return studentService.getStudents(page, size, sortBy);
     }
+
 
     @GetMapping("/students/{id}")
     public Student getStudent(@PathVariable Long id) {
@@ -52,6 +57,18 @@ public class StudentController {
     @GetMapping("/students/email/{email}")
     public Student getStudentByemail(@PathVariable String email) {
         return studentService.getStudentByEmail(email);
+    }
+
+    @PostMapping("/students/{studentId}/courses/{courseId}")
+    public Student addCourseToStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long courseId) {
+        return studentService.addCourseToStudent(studentId, courseId);
+    }
+
+    @GetMapping("/students/older-than/{age}")
+    public List<Student> getStudentsOlderThan(@PathVariable int age) {
+        return studentService.getStudentsOlderThan(age);
     }
 
 

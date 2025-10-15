@@ -1,12 +1,14 @@
 package com.youssef.springboot_learning.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.persistence.ManyToMany;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.youssef.springboot_learning.model.Course;
 
 @Entity
 
@@ -25,6 +27,14 @@ public class Student {
     @Email(message = "email cant be blank")
     @NotBlank(message = "invalid email")
     private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses = new ArrayList<>();
 
     public Student() {
     }
@@ -66,5 +76,9 @@ public class Student {
 
     public String getEmail() {
         return email;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
     }
 }
