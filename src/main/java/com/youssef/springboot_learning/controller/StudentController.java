@@ -7,10 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.youssef.springboot_learning.dto.StudentDTO;
-
-
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 
